@@ -147,9 +147,13 @@ var mapStore = function mapStore(models) {
 
 
   var createAction = function createAction(state, action) {
-    var modelName = getModelName(action.type);
-    var newState = actions[action.type](state[modelName], action);
-    return _objectSpread({}, state, _defineProperty({}, modelName, newState));
+    if (action.type) {
+      var modelName = getModelName(action.type);
+      var newState = actions[action.type](state[modelName], action);
+      return _objectSpread({}, state, _defineProperty({}, modelName, newState));
+    }
+
+    return state;
   };
 
   return {
@@ -160,39 +164,112 @@ var mapStore = function mapStore(models) {
   };
 };
 
+var thunkMiddleware = function thunkMiddleware(_ref) {
+  var dispatch = _ref.dispatch,
+      getState = _ref.getState;
+  return function (next) {
+    return function (action) {
+      if (typeof action === 'function') {
+        return action(dispatch, getState);
+      }
+
+      return next(action);
+    };
+  };
+};
+
+var loggingMiddleware = function loggingMiddleware(_ref2) {
+  var getState = _ref2.getState;
+  return function (next) {
+    return function (action) {
+      var oldState = getState();
+      next(action);
+      var newState = getState();
+      console.groupCollapsed(action.type);
+      console.info('before', oldState);
+      console.info('action', action);
+      console.info('after', newState);
+      console.groupEnd();
+    };
+  };
+};
+
+var applyMiddleware = function applyMiddleware() {
+  for (var _len = arguments.length, middlewares = new Array(_len), _key = 0; _key < _len; _key++) {
+    middlewares[_key] = arguments[_key];
+  }
+
+  return function (store) {
+    if (middlewares.length === 0) {
+      return function (dispatch) {
+        return dispatch;
+      };
+    }
+
+    if (middlewares.length === 1) {
+      return middlewares[0](store);
+    }
+
+    var boundMiddlewares = middlewares.map(function (middleware) {
+      return middleware(store);
+    });
+    return boundMiddlewares.reduce(function (a, b) {
+      return function (next) {
+        return a(b(next));
+      };
+    });
+  };
+};
+/**
+ * Create Store
+ */
+
+
 var createStore = function createStore(models) {
   var mappedStore = mapStore(models);
   var state = mappedStore.initialState;
   var store = {};
-  var subscribes = []; // Get the store state
+  var subscribes = [];
+  var middleware = applyMiddleware(loggingMiddleware);
+
+  var coreDispatch = function coreDispatch(action) {
+    state = mappedStore.actions(state, action);
+    subscribes.forEach(function (subscribe) {
+      return subscribe();
+    });
+  }; // Get the store state
+
 
   store.getState = function () {
     return state;
   }; // Store dispatch
 
 
-  store.dispatch = function (action) {
-    console.log(action);
-    state = mappedStore.actions(state, action);
-    subscribes.forEach(function (subscribe) {
-      return subscribe(state);
-    });
-  }; // Store subscribe
-
+  store.dispatch = coreDispatch; // Store subscribe
 
   store.subscribe = function (fn) {
     subscribes.push(fn);
     console.log('Subscribe to store', subscribes);
     return function () {
-      var index = subscribes.indexOf(fn);
-
-      if (index > -1) {
-        subscribes.splice(index, 1);
-        console.log('Unsubscribe from store', subscribes);
-      }
+      subscribes.filter(function (lis) {
+        return lis !== fn;
+      });
+      console.log('Unsubscribe from store', subscribes);
     };
   };
 
+  if (middleware) {
+    var dispatch = function dispatch(action) {
+      return store.dispatch(action);
+    };
+
+    store.dispatch = middleware({
+      dispatch: dispatch,
+      getState: store.getState
+    })(coreDispatch);
+  }
+
+  store.dispatch({});
   return store;
 };
 
@@ -215,6 +292,7 @@ var counter = {
   },
   actions: {
     increment: function increment(state) {
+      console.log('increment action inside counter model');
       return _objectSpread({}, state, {
         count: state.count + 1
       });
@@ -235,18 +313,20 @@ var store = (0, _.createStore)({
   counter: counter,
   user: user
 });
-var unsubscribe = store.subscribe(function (state) {
-  console.log('Store Change', state);
+var unsubscribe = store.subscribe(function () {
+  console.log('Store Change', store.getState());
 });
 console.log(store);
 console.log(store.getState());
-store.dispatch({
-  type: 'counter/increment'
-});
-store.dispatch({
-  type: 'counter/increment'
-});
-unsubscribe();
+document.addEventListener('click', function () {
+  store.dispatch({
+    type: 'counter/increment'
+  });
+  var countDiv = document.getElementById('count');
+  countDiv.innerHTML = store.getState().counter.count;
+}); // store.dispatch({ type: 'counter/increment' })
+// store.dispatch({ type: 'counter/increment' })
+// unsubscribe()
 },{".":"index.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -275,7 +355,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59202" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53368" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
