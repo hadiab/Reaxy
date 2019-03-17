@@ -1,12 +1,13 @@
 {
-  "name": "state-managment",
+  "name": "reaxy",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "React state managment with hooks",
+  "main": "dist/index.js",
   "scripts": {
-    "dev": "parcel src/index.html -p 3333"
+    "dev": "parcel example/index.html -p 3333",
+    "build": "parcel build ./src/index.js"
   },
-  "author": "",
+  "author": "hadiab",
   "license": "ISC",
   "devDependencies": {
     "parcel-bundler": "^1.12.2"

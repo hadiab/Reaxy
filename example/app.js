@@ -1,4 +1,4 @@
-import { createStore } from '.'
+import { createStore } from '../src'
 
 /**
  * Models

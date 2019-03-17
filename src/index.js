@@ -42,12 +42,14 @@ const loggingMiddleware = ({ getState }) => next => action => {
   const oldState = getState()
   next(action)
   const newState = getState()
-
-  console.groupCollapsed(action.type)
-  console.info('before', oldState)
-  console.info('action', action)
-  console.info('after', newState)
-  console.groupEnd()
+  
+  if(action.type) {
+    console.groupCollapsed(action.type)
+    console.info('before', oldState)
+    console.info('action', action)
+    console.info('after', newState)
+    console.groupEnd()
+  }
 }
 
 const applyMiddleware = (...middlewares) => store => {
@@ -88,11 +90,9 @@ export const createStore = (models) => {
   // Store subscribe
   store.subscribe = (fn) => {
     subscribes.push(fn)
-    console.log('Subscribe to store', subscribes)
 
     return () => {
       subscribes.filter(lis => lis !== fn)
-      console.log('Unsubscribe from store', subscribes)
     }
   }
 
