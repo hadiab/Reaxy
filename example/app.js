@@ -1,4 +1,6 @@
 import { createStore } from '../src'
+import React from 'react'
+import ReactDOM from 'react-dom'
 
 /**
  * Models
@@ -49,14 +51,12 @@ const unsubscribe = store.subscribe(() => {
 console.log(store)
 console.log(store.getState())
 
-document.getElementById('btn-inc').addEventListener('click', () => {
-  store.dispatch({ type: 'counter/increment' })
-})
+const App = () => {
+  return (
+    <div>App</div>
+  )
+}
 
-document.getElementById('btn-dec').addEventListener('click', () => {
-  store.dispatch({ type: 'counter/decrement' })
-})
+ReactDOM.render(<App />, document.getElementById('app'))
 
-document.getElementById('btn-inc-async').addEventListener('click', () => {
-  store.dispatch({ type: 'counter/asyncIncrement' })
-})
+
