@@ -1,3 +1,5 @@
+import applyMiddleware from './middleware'
+
 const getModelName = (path) => {
   return path.trim().split('/')[0]
 }
@@ -5,6 +7,7 @@ const getModelName = (path) => {
 const mapStore = (models) => {
   const initialState = {}
   const actions = {}
+  const effects = {}
   
   // Map models and create initial state object & actions object
   for(let model in models) {
@@ -13,56 +16,29 @@ const mapStore = (models) => {
     for(let action in models[model].actions) {
       actions[`${model}/${action}`] = models[model].actions[action]
     }
+
+    for(let effect in models[model].effects) {
+      effects[`${model}/${effect}`] = models[model].effects[effect]
+    }
   }
 
   // create actions and pass the nested state and then return the all state 
   const createAction = (state, action) => {
-    if(action.type) {
-      const modelName = getModelName(action.type)
+    if(!action.type) return state
+    
+    const modelName = getModelName(action.type)
+
+    if(action.type in actions) {
       const newState = actions[action.type](state[modelName], action)
       return { ...state, [modelName]: newState }
     }
-    return state
   }
 
   return {
     initialState,
     actions: (state, action) => createAction(state, action),
+    effects
   }
-}
-
-const thunkMiddleware = ({ dispatch, getState }) => next => action => {
-  if (typeof action === 'function') {
-    return action(dispatch, getState)
-  }
-  return next(action)
-}
-
-const loggingMiddleware = ({ getState }) => next => action => {
-  const oldState = getState()
-  next(action)
-  const newState = getState()
-  
-  if(action.type) {
-    console.groupCollapsed(action.type)
-    console.info('before', oldState)
-    console.info('action', action)
-    console.info('after', newState)
-    console.groupEnd()
-  }
-}
-
-const applyMiddleware = (...middlewares) => store => {
-  if (middlewares.length === 0) {
-    return dispatch => dispatch
-  }
-
-  if (middlewares.length === 1) {
-    return middlewares[0](store)
-  }
-
-  const boundMiddlewares = middlewares.map(middleware => middleware(store))
-  return boundMiddlewares.reduce((a, b) => next => a(b(next)))
 }
 
 /**
@@ -74,7 +50,7 @@ export const createStore = (models) => {
   let state = mappedStore.initialState
   const store = {}
   const subscribes = []
-  const middleware = applyMiddleware(loggingMiddleware)
+  const middleware = applyMiddleware()
 
   const coreDispatch = action => {
     state = mappedStore.actions(state, action)
@@ -100,7 +76,8 @@ export const createStore = (models) => {
     const dispatch = action => store.dispatch(action)
     store.dispatch = middleware({
       dispatch,
-      getState: store.getState
+      getState: store.getState,
+      effects: mappedStore.effects
     })(coreDispatch)
   }
 

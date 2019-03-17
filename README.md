@@ -1,6 +1,6 @@
 # Reaxy
 
-React state managment with hooks
+React easy state managment with hooks
 
 [![build status](https://img.shields.io/travis/reduxjs/redux/master.svg?style=flat-square)](https://travis-ci.org/reduxjs/redux)
 [![npm version](https://img.shields.io/npm/v/redux.svg?style=flat-square)](https://www.npmjs.com/package/reaxy)
