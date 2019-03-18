@@ -1,4 +1,6 @@
-import produce from 'immer'
+import produce, { setAutoFreeze } from 'immer'
+
+setAutoFreeze(false)
 
 /**
  * Get module name from path
