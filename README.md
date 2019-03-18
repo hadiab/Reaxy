@@ -20,7 +20,7 @@ yarn add reaxy
 
 ## Getting started
 
-Create main store
+Create the main store
 
 ```js
 import { createStore } from 'reaxy'
@@ -46,14 +46,14 @@ const store = createStore({
 
 Passing the store to the provider that wrap our app
 
-```js
+```jsx
 import { Provider } from 'reaxy'
 
 <Provider store={store}>
   // Application...
 </Provider>
 ```
-
+### useStore
 Using the store with the useStore hook
 
 ```js
@@ -64,7 +64,7 @@ const store = useStore()
 
 Example
 
-```js
+```jsx
 // Module
 const counter = {
   state: {
@@ -84,6 +84,34 @@ const App = () => {
 
 // Wrap our app with provider and passing it the store
 ReactDOM.render(<Provider store={store}><App /></Provider>, document.getElementById('app'))
+```
+
+### useDispatch
+dispatching an action with useDispatch hook
+
+First Define an action in the module
+You can mutate the state directly, and the magic of immer.js will create new immutable state
+
+```js
+const counter = {
+  state: {
+    count: 0
+  },
+  increment(state) {
+    state.count++
+  }
+}
+```
+
+Then in the component
+the dispatch type will be '[moduleName]/[actionName]'
+
+```js
+import { useDispatch } from 'reaxy'
+
+const dispatch = useDispatch()
+
+dispatch({ type: 'counter/increment' })
 ```
 
 ## Running the tests
