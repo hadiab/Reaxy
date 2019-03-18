@@ -2,7 +2,7 @@
 
 React easy state managment with hooks
 
-[![npm version](https://img.shields.io/npm/v/redux.svg?style=flat-square)](https://www.npmjs.com/package/reaxy)
+[![npm version](https://img.shields.io/npm/v/reaxy.svg)](https://www.npmjs.com/package/reaxy)
 
 ### Installing
 
@@ -54,7 +54,7 @@ import { Provider } from 'reaxy'
 </Provider>
 ```
 ### useStore
-Using the store with the useStore hook
+Using the store with the `useStore` hook
 
 ```js
 import { useStore } from 'reaxy'
@@ -87,7 +87,7 @@ ReactDOM.render(<Provider store={store}><App /></Provider>, document.getElementB
 ```
 
 ### useDispatch
-dispatching an action with useDispatch hook
+dispatching an action with `useDispatch` hook
 
 First Define an action in the module
 You can mutate the state directly, and the magic of immer.js will create new immutable state
