@@ -22,25 +22,68 @@ yarn add reaxy
 
 Create main store
 
-```
+```js
 import { createStore } from 'reaxy'
 const store = createStore({})
 
 ```
 
 Adding module to the store
+Each module has state, actions and effects
+
+```js
+const module = {
+  state: {},
+  actions: {},
+  effects: {}
+}
+
+const store = createStore({
+  moduleName: module
+})
 
 ```
+
+Passing the store to the provider that wrap our app
+
+```js
+import { Provider } from 'reaxy'
+
+<Provider store={store}>
+  // Application...
+</Provider>
+```
+
+Using the store with the useStore hook
+
+```js
+import { useStore } from 'reaxy'
+
+const store = useStore()
+```
+
+Example
+
+```js
+// Module
 const counter = {
   state: {
     count: 0
   }
 }
 
-const store = createStore({
-  counter: counter
-})
+// Create store
+const store = createStore({ counter })
 
+// Using the store
+const App = () => {
+  const store = useStore()
+
+  return <div>{store.counter.count}</div>
+}
+
+// Wrap our app with provider and passing it the store
+ReactDOM.render(<Provider store={store}><App /></Provider>, document.getElementById('app'))
 ```
 
 ## Running the tests
