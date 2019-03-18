@@ -28,8 +28,7 @@ const store = createStore({})
 
 ```
 
-Adding module to the store
-Each module has state, actions and effects
+Adding module to the store, each module has state, actions and effects
 
 ```js
 const module = {
@@ -93,11 +92,9 @@ ReactDOM.render(<Provider store={store}><App /></Provider>, document.getElementB
 ```
 
 ### useDispatch
-dispatching an action with `useDispatch` hook
+Dispatching an action with `useDispatch` hook
 
-First Define an action in the module, it takes state and payload as args 
-
-Mutating the state directly, and the magic of immer.js will create new immutable state
+First Define an action in the module, it takes state and payload as an args, and mutating the state directly, and the magic of immer.js will create new immutable state
 
 ```js
 const counter = {
@@ -123,7 +120,7 @@ dispatch({ type: 'counter/increment' })
 ```
 
 ### useAction
-dispatching an action directly with `useAction` hook
+Dispatching an action directly with `useAction` hook
 
 useAction takes a path that will be `[moduleName]/[actionName]`
 
@@ -148,9 +145,7 @@ const counter = {
 ```
 
 ### Async
-For working with side effects calls, we will use effects in the module
-
-Each effect will be async function and it takes dispatch as an args 
+For working with side effects calls, we will use effects in the module, each effect will be async function and it takes dispatch as an args 
 
 ```js
 const module = {
@@ -163,9 +158,9 @@ const module = {
 }
 ```
 
-Example
+#### Example
 
-Defining new effect for fetching posts form remote api
+Defining new effect for fetching posts from remote api
 
 ```js
 const posts = {
@@ -191,7 +186,7 @@ const posts = {
 }
 ```
 
-Dispatch fetchPosts
+Dispatching `fetchPosts`
 
 ```js
 const Post = (props) => {
@@ -203,14 +198,6 @@ const Post = (props) => {
 
   return <div>{posts.items.map(...)}</div>
 }
-```
-
-## Running the tests
-
-Clone the project then run
-
-```
-npm run dev
 ```
 
 ## Contributing
