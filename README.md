@@ -2,7 +2,6 @@
 
 React easy state managment with hooks
 
-[![build status](https://img.shields.io/travis/reduxjs/redux/master.svg?style=flat-square)](https://travis-ci.org/reduxjs/redux)
 [![npm version](https://img.shields.io/npm/v/redux.svg?style=flat-square)](https://www.npmjs.com/package/reaxy)
 
 ### Installing
@@ -17,6 +16,31 @@ Install with yarn
 
 ```
 yarn add reaxy
+```
+
+## Getting started
+
+Create main store
+
+```
+import { createStore } from 'reaxy'
+const store = createStore({})
+
+```
+
+Adding module to the store
+
+```
+const counter = {
+  state: {
+    count: 0
+  }
+}
+
+const store = createStore({
+  counter: counter
+})
+
 ```
 
 ## Running the tests
