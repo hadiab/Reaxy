@@ -34,4 +34,14 @@ const applyMiddleware = (...middlewares) => store => {
   return boundMiddlewares.reduce((a, b) => next => a(b(next)))
 }
 
-export default () => applyMiddleware(loggingMiddleware, asyncMiddleware)
+export default (options) => {
+  let middlewares = applyMiddleware(asyncMiddleware)
+  
+  if(options && Object.keys(options).length > 0) {
+    if(options.debug) {
+      middlewares = applyMiddleware(loggingMiddleware, asyncMiddleware)
+    }
+  }
+
+  return middlewares
+}

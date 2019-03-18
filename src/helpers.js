@@ -1,37 +1,42 @@
-const getModelName = (path) => {
+/**
+ * Get module name from path
+ */
+const getModuleName = (path) => {
   return path.trim().split('/')[0]
 }
 
 /**
  * mapping the store into state and actions and effects
  */
-export const mapStore = (models) => {
+export const mapStore = (modules) => {
   const initialState = {}
   const actions = {}
   const effects = {}
   
-  // Map models and create initial state object & actions object
-  for(let model in models) {
-    initialState[model] = models[model].state
+  // Map modules and create initial state object & actions object
+  for(let module in modules) {
+    initialState[module] = modules[module].state
 
-    for(let action in models[model].actions) {
-      actions[`${model}/${action}`] = models[model].actions[action]
+    for(let action in modules[module].actions) {
+      actions[`${module}/${action}`] = modules[module].actions[action]
     }
 
-    for(let effect in models[model].effects) {
-      effects[`${model}/${effect}`] = models[model].effects[effect]
+    for(let effect in modules[module].effects) {
+      effects[`${module}/${effect}`] = modules[module].effects[effect]
     }
   }
 
-  // create actions and pass the nested state and then return the all state 
+  // create actions and pass the nested state and then return the new state 
   const createAction = (state, action) => {
     if(!action.type) return state
     
-    const modelName = getModelName(action.type)
+    const moduleName = getModuleName(action.type)
 
     if(action.type in actions) {
-      const newState = actions[action.type](state[modelName], action)
-      return { ...state, [modelName]: newState }
+      const newState = actions[action.type](state[moduleName], action.payload)
+      return { ...state, [moduleName]: newState }
+    } else {
+      return state
     }
   }
 
