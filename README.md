@@ -62,6 +62,12 @@ import { useStore } from 'reaxy'
 const store = useStore()
 ```
 
+Using a module by pass the module name to `useStore` hook
+
+```js
+const counter = useStore('counter')
+```
+
 Example
 
 ```jsx
@@ -89,22 +95,24 @@ ReactDOM.render(<Provider store={store}><App /></Provider>, document.getElementB
 ### useDispatch
 dispatching an action with `useDispatch` hook
 
-First Define an action in the module
-You can mutate the state directly, and the magic of immer.js will create new immutable state
+First Define an action in the module, it takes state and payload as args 
+
+Mutating the state directly, and the magic of immer.js will create new immutable state
 
 ```js
 const counter = {
   state: {
     count: 0
   },
-  increment(state) {
-    state.count++
+  actions: {
+    increment(state) {
+      state.count++
+    }
   }
 }
 ```
 
-Then in the component
-the dispatch type will be '[moduleName]/[actionName]'
+The dispatch type will be `[moduleName]/[actionName]`
 
 ```js
 import { useDispatch } from 'reaxy'
@@ -112,6 +120,89 @@ import { useDispatch } from 'reaxy'
 const dispatch = useDispatch()
 
 dispatch({ type: 'counter/increment' })
+```
+
+### useAction
+dispatching an action directly with `useAction` hook
+
+useAction takes a path that will be `[moduleName]/[actionName]`
+
+```js
+import { useAction } from 'reaxy'
+
+const reset = useAction('counter/reset')
+
+<button onClick={() => reset(0)}>reset</button>
+```
+
+```js
+const counter = {
+  ...
+  actions: {
+    ...,
+    reset(state, payload) {
+      state.count = payload
+    }
+  }
+}
+```
+
+### Async
+For working with side effects calls, we will use effects in the module
+
+Each effect will be async function and it takes dispatch as an args 
+
+```js
+const module = {
+  ...
+  effects: {
+    func: async (dispatch) => {
+      // dispatch an action
+    }
+  }
+}
+```
+
+Example
+
+Defining new effect for fetching posts form remote api
+
+```js
+const posts = {
+  state: {
+    items: []
+  },
+  actions: {
+    setPosts(state, posts) {
+      state.items = posts
+    }
+  },
+  effects: {
+    fetchPosts: async (dispatch) => {
+
+      // Fetching posts
+      const res = await fetch('https://jsonplaceholder.typicode.com/posts')
+      const data = await res.json()
+
+      // set posts
+      dispatch({ type: 'posts/setPosts', payload: data })
+    }
+  }
+}
+```
+
+Dispatch fetchPosts
+
+```js
+const Post = (props) => {
+
+  const posts = useStore('posts')
+  const fetchPosts = useAction('posts/fetchPosts')
+
+  useEffect(() => fetchPosts(), [])
+
+  return <div>{posts.items.map(...)}</div>
+}
 ```
 
 ## Running the tests
