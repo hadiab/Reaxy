@@ -1,3 +1,5 @@
+import produce from 'immer'
+
 /**
  * Get module name from path
  */
@@ -29,12 +31,13 @@ export const mapStore = (modules) => {
   // create actions and pass the nested state and then return the new state 
   const createAction = (state, action) => {
     if(!action.type) return state
-    
-    const moduleName = getModuleName(action.type)
 
     if(action.type in actions) {
-      const newState = actions[action.type](state[moduleName], action.payload)
-      return { ...state, [moduleName]: newState }
+      const newState = produce(state, draft => {
+        const moduleName = getModuleName(action.type)
+        actions[action.type](draft[moduleName], action.payload)
+      })
+      return newState
     } else {
       return state
     }

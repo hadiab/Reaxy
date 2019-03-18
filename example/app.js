@@ -13,7 +13,7 @@ const user = {
   },
   actions: {
     changeEmail(state) {
-      return { ...state, email: 'test@test.com' }
+      state.email = 'test@test.com'
     }
   }
 }
@@ -24,13 +24,13 @@ const counter = {
   },
   actions: {
     increment(state) {
-      return { ...state, count: state.count + 1 }
+      state.count++
     },
     decrement(state) {
-      return { ...state, count: state.count - 1 }
+      state.count--
     },
     reset(state, payload) {
-      return { ...state, count: payload }
+      state.count = payload
     }
   }
 }
@@ -41,7 +41,7 @@ const posts = {
   },
   actions: {
     setPosts(state, posts) {
-      return { ...state, items: posts }
+      state.items = posts
     }
   },
   effects: {

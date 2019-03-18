@@ -12,6 +12,10 @@
   "browserslist": [
     "last 1 Chrome version"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hadiab/Reaxy.git"
+  },
   "devDependencies": {
     "babel-core": "^6.26.3",
     "babel-plugin-syntax-dynamic-import": "^6.18.0",
@@ -21,6 +25,7 @@
     "parcel-bundler": "^1.12.2"
   },
   "dependencies": {
+    "immer": "^2.1.3",
     "react": "^16.8.4",
     "react-dom": "^16.8.4",
     "use-force-update": "^1.0.4"
